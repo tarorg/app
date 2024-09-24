@@ -69,4 +69,10 @@ import DataContent from '../components/data.astro';
     this.style.height = 'auto';
     this.style.height = (this.scrollHeight) + 'px';
   });
+
+  // Add this event listener to handle the custom event from data.astro
+  window.addEventListener('showContent', (event: CustomEvent) => {
+    const contentId = event.detail;
+    showContent(contentId);
+  });
 </script>

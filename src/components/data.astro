@@ -10,6 +10,14 @@ const incidents = [
 
 const itemsPerPage = 5;
 const totalPages = Math.ceil(incidents.length / itemsPerPage);
+
+const incidentTypes = ['Crime', 'Accident', 'Natural Disaster', 'Other'];
+const severityLevels = ['Minor', 'Major', 'Critical'];
+const statusOptions = ['Stable', 'Critical', 'Deceased', 'At Large', 'Arrested'];
+const evidenceTypes = ['Physical', 'Digital', 'Testimonial'];
+const mediaTypes = ['Photo', 'Video', 'Audio'];
+const reportStatuses = ['Draft', 'Published', 'Archived'];
+const genderOptions = ['Male', 'Female', 'Other', 'Prefer not to say'];
 ---
 
 <div id="dataContent" class="bg-white">
@@ -30,7 +38,7 @@ const totalPages = Math.ceil(incidents.length / itemsPerPage);
         </svg>
         <span class="sr-only">Search</span>
       </button>
-      <button type="button" class="p-2.5 ms-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+      <button type="button" id="addIncidentBtn" class="p-2.5 ms-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
         <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
         </svg>
@@ -94,9 +102,137 @@ const totalPages = Math.ceil(incidents.length / itemsPerPage);
   </nav>
 </div>
 
+<!-- Add Incident Modal -->
+<div id="addIncidentModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+  <div class="relative w-full h-full bg-white overflow-y-auto">
+    <div class="p-5">
+      <h3 class="text-lg font-medium leading-6 text-gray-900 mb-2">Add New Incident</h3>
+      <div class="mb-4">
+        <div class="border-b border-gray-200">
+          <nav class="-mb-px flex overflow-x-auto" aria-label="Tabs">
+            <button class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" data-tab="incident">Incident Details</button>
+            <button class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ml-8" data-tab="victim">Victim Details</button>
+            <button class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ml-8" data-tab="perpetrator">Perpetrator Details</button>
+            <button class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ml-8" data-tab="witness">Witness Details</button>
+            <button class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ml-8" data-tab="evidence">Evidence & Media</button>
+            <button class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ml-8" data-tab="reporting">Reporting & Analysis</button>
+            <button class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ml-8" data-tab="legal">Legal Details</button>
+          </nav>
+        </div>
+      </div>
+      <form id="addIncidentForm" class="space-y-4">
+        <div id="incidentTab" class="tab-content">
+          <div class="grid gap-6 mb-6 md:grid-cols-2">
+            <div>
+              <label for="incidentId" class="block mb-2 text-sm font-medium text-gray-900">Incident ID</label>
+              <input type="text" id="incidentId" name="incidentId" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Unique identifier" required>
+            </div>
+            <div>
+              <label for="incidentTitle" class="block mb-2 text-sm font-medium text-gray-900">Incident Title</label>
+              <input type="text" id="incidentTitle" name="incidentTitle" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Brief title" required>
+            </div>
+            <div>
+              <label for="incidentDate" class="block mb-2 text-sm font-medium text-gray-900">Date and Time</label>
+              <input type="datetime-local" id="incidentDate" name="incidentDate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+            </div>
+            <div>
+              <label for="incidentLocation" class="block mb-2 text-sm font-medium text-gray-900">Location</label>
+              <input type="text" id="incidentLocation" name="incidentLocation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Address, city, state, country, GPS" required>
+            </div>
+            <div>
+              <label for="incidentType" class="block mb-2 text-sm font-medium text-gray-900">Type of Incident</label>
+              <select id="incidentType" name="incidentType" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                <option value="">Select type</option>
+                {incidentTypes.map((type) => (
+                  <option value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label for="incidentSeverity" class="block mb-2 text-sm font-medium text-gray-900">Severity</label>
+              <select id="incidentSeverity" name="incidentSeverity" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                <option value="">Select severity</option>
+                {severityLevels.map((level) => (
+                  <option value={level}>{level}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div>
+            <label for="incidentDescription" class="block mb-2 text-sm font-medium text-gray-900">Description</label>
+            <textarea id="incidentDescription" name="incidentDescription" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Detailed description of the incident"></textarea>
+          </div>
+        </div>
+
+        <div id="victimTab" class="tab-content hidden">
+          <!-- Victim Details fields -->
+          <div class="grid gap-6 mb-6 md:grid-cols-2">
+            <div>
+              <label for="victimId" class="block mb-2 text-sm font-medium text-gray-900">Victim ID</label>
+              <input type="text" id="victimId" name="victimId" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Unique identifier">
+            </div>
+            <div>
+              <label for="victimName" class="block mb-2 text-sm font-medium text-gray-900">Victim Name</label>
+              <input type="text" id="victimName" name="victimName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Full name">
+            </div>
+            <div>
+              <label for="victimAge" class="block mb-2 text-sm font-medium text-gray-900">Victim Age</label>
+              <input type="number" id="victimAge" name="victimAge" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Age">
+            </div>
+            <div>
+              <label for="victimGender" class="block mb-2 text-sm font-medium text-gray-900">Victim Gender</label>
+              <select id="victimGender" name="victimGender" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                <option value="">Select gender</option>
+                {genderOptions.map((gender) => (
+                  <option value={gender}>{gender}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label for="victimOccupation" class="block mb-2 text-sm font-medium text-gray-900">Victim Occupation</label>
+              <input type="text" id="victimOccupation" name="victimOccupation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Occupation">
+            </div>
+            <div>
+              <label for="victimContact" class="block mb-2 text-sm font-medium text-gray-900">Victim Contact Information</label>
+              <input type="text" id="victimContact" name="victimContact" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Phone, email, address">
+            </div>
+          </div>
+          <div>
+            <label for="victimInjuries" class="block mb-2 text-sm font-medium text-gray-900">Injuries</label>
+            <textarea id="victimInjuries" name="victimInjuries" rows="2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Description of injuries sustained"></textarea>
+          </div>
+          <div>
+            <label for="victimTreatment" class="block mb-2 text-sm font-medium text-gray-900">Medical Treatment</label>
+            <textarea id="victimTreatment" name="victimTreatment" rows="2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Details of medical treatment received"></textarea>
+          </div>
+          <div>
+            <label for="victimStatus" class="block mb-2 text-sm font-medium text-gray-900">Victim Status</label>
+            <select id="victimStatus" name="victimStatus" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+              <option value="">Select status</option>
+              {statusOptions.map((status) => (
+                <option value={status}>{status}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <!-- Add similar structures for perpetrator, witness, evidence, reporting, and legal tabs -->
+
+        <div class="flex justify-end mt-4">
+          <button type="button" id="closeModal" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 mr-2">Cancel</button>
+          <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Add Incident</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script>
   const searchInput = document.getElementById('table-search') as HTMLInputElement;
   const tableRows = document.querySelectorAll('tbody tr');
+  const addIncidentBtn = document.getElementById('addIncidentBtn');
+  const addIncidentModal = document.getElementById('addIncidentModal');
+  const addIncidentForm = document.getElementById('addIncidentForm');
 
   searchInput.addEventListener('input', function() {
     const searchTerm = this.value.toLowerCase();
@@ -109,4 +245,71 @@ const totalPages = Math.ceil(incidents.length / itemsPerPage);
       }
     });
   });
+
+  addIncidentBtn?.addEventListener('click', () => {
+    addIncidentModal?.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling of the background
+  });
+
+  addIncidentModal?.addEventListener('click', (e) => {
+    if (e.target === addIncidentModal) {
+      closeModal();
+    }
+  });
+
+  document.getElementById('closeModal')?.addEventListener('click', closeModal);
+
+  function closeModal() {
+    addIncidentModal?.classList.add('hidden');
+    document.body.style.overflow = ''; // Re-enable scrolling
+  }
+
+  addIncidentForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    // Here you would typically send the form data to your server
+    // For now, we'll just log it to the console
+    const formData = new FormData(e.target as HTMLFormElement);
+    console.log('New incident:', Object.fromEntries(formData));
+    addIncidentModal?.classList.add('hidden');
+  });
+
+  // Tab switching functionality
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const tabName = button.getAttribute('data-tab');
+      
+      tabButtons.forEach(btn => btn.classList.remove('border-indigo-500', 'text-indigo-600'));
+      tabContents.forEach(content => content.classList.add('hidden'));
+      
+      button.classList.add('border-indigo-500', 'text-indigo-600');
+      document.getElementById(`${tabName}Tab`)?.classList.remove('hidden');
+    });
+  });
+
+  // Set the first tab as active by default
+  tabButtons[0].click();
 </script>
+
+<style>
+  .tab-button {
+    @apply text-gray-500 hover:text-gray-700 hover:border-gray-300;
+  }
+
+  .tab-button.active {
+    @apply border-indigo-500 text-indigo-600;
+  }
+
+  #addIncidentModal {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  #addIncidentModal > div {
+    height: 100vh;
+    overflow-y: auto;
+  }
+</style>
