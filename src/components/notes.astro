@@ -1,0 +1,264 @@
+---
+import EditorJS from '@editorjs/editorjs';
+import Header from '@editorjs/header';
+import List from '@editorjs/list';
+import Checklist from '@editorjs/checklist';
+import Quote from '@editorjs/quote';
+import Warning from '@editorjs/warning';
+import Marker from '@editorjs/marker';
+import CodeTool from '@editorjs/code';
+import Delimiter from '@editorjs/delimiter';
+import InlineCode from '@editorjs/inline-code';
+import LinkTool from '@editorjs/link';
+import ImageTool from '@editorjs/image';
+import Embed from '@editorjs/embed';
+import Table from '@editorjs/table';
+---
+
+<div id="notesContent" class="h-full overflow-y-auto bg-white">
+  <h2 class="text-2xl font-bold mb-6 px-10 pt-10">Notes</h2>
+  <div id="editorjs" class="bg-white px-10 pb-10"></div>
+</div>
+
+<script>
+  import EditorJS from '@editorjs/editorjs';
+  import Header from '@editorjs/header';
+  import List from '@editorjs/list';
+  import Checklist from '@editorjs/checklist';
+  import Quote from '@editorjs/quote';
+  import Warning from '@editorjs/warning';
+  import Marker from '@editorjs/marker';
+  import CodeTool from '@editorjs/code';
+  import Delimiter from '@editorjs/delimiter';
+  import InlineCode from '@editorjs/inline-code';
+  import LinkTool from '@editorjs/link';
+  import ImageTool from '@editorjs/image';
+  import Embed from '@editorjs/embed';
+  import Table from '@editorjs/table';
+
+  const editor = new EditorJS({
+    holder: 'editorjs',
+    placeholder: 'Start writing your post...',
+    minHeight: 0,
+    tools: {
+      header: {
+        class: Header,
+        config: {
+          levels: [1, 2, 3, 4, 5, 6],
+          defaultLevel: 3,
+          shortcut: 'CMD+SHIFT+H'
+        }
+      },
+      list: List,
+      checklist: Checklist,
+      quote: Quote,
+      warning: Warning,
+      marker: Marker,
+      code: CodeTool,
+      delimiter: Delimiter,
+      inlineCode: InlineCode,
+      linkTool: LinkTool,
+      image: {
+        class: ImageTool,
+        config: {
+          uploader: {
+            uploadByFile(file: File) {
+              console.log('Uploading file in ImageTool:', file);
+              return uploadToR2(file).catch(error => {
+                console.error('Error in ImageTool uploader:', error);
+                alert(`Failed to upload image: ${error.message}`);
+                return {
+                  success: 0,
+                  file: {
+                    url: '',
+                  },
+                };
+              });
+            },
+          },
+        },
+      },
+      embed: {
+        class: Embed,
+        config: {
+          services: {
+            youtube: true,
+            twitter: {
+              regex: /^https?:\/\/(twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/,
+              embedUrl: 'https://platform.twitter.com/embed/Tweet.html?id=<%= remote_id %>',
+              html: '<blockquote class="twitter-tweet" data-dnt="true"><a href="<%= url %>"></a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"><\/script>',
+              height: 'auto',
+              width: '100%',
+              id: (matches: string[]) => matches[matches.length - 1],
+            },
+            instagram: {
+              regex: /(?:https?:\/\/)?(?:www\.)?(?:instagram\.com|instagr\.am)\/(?:p|reel)\/([A-Za-z0-9-_]+)/,
+              embedUrl: 'https://www.instagram.com/p/<%= remote_id %>/embed',
+              html: '<iframe width="400" height="505" style="border: none; overflow: hidden;" src="<%= embedUrl %>"></iframe>',
+              height: 505,
+              width: 400,
+              id: (matches: string[]) => matches[1],
+            },
+            spotify: {
+              regex: /https:\/\/open\.spotify\.com\/(track|playlist|album)\/([a-zA-Z0-9]+)/,
+              embedUrl: 'https://open.spotify.com/embed/<%= remote_id %>',
+              html: '<iframe style="border-radius:12px" src="<%= embedUrl %>" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>',
+              height: 352,
+              width: '100%',
+              id: (matches: string[]) => `${matches[1]}/${matches[2]}`,
+            },
+          }
+        }
+      },
+      table: Table,
+    },
+    onChange: (api: any, event: CustomEvent) => {
+      console.log('Editor content changed:', event);
+    },
+    onReady: () => {
+      console.log('Editor.js is ready to work!');
+    },
+  });
+
+  // Add this debugging code
+  editor.isReady.then(() => {
+    const embedTool = editor.blocks.getBlocksCount();
+    console.log('Number of blocks:', embedTool);
+    console.log('Embed tool configuration:', editor.configuration.tools.embed);
+  });
+
+  // Expose the editor instance to the global scope
+  (window as any).notesEditor = editor;
+
+  // Define uploadToR2 function (you might want to move this to a separate utility file)
+  async function uploadToR2(file: File) {
+    // Implement your R2 upload logic here
+    console.log('Uploading to R2:', file);
+    // This is a placeholder, replace with actual upload logic
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          success: 1,
+          file: {
+            url: URL.createObjectURL(file),
+          },
+        });
+      }, 1000);
+    });
+  }
+
+  // Add this code after the EditorJS initialization
+  document.addEventListener('DOMContentLoaded', () => {
+    const editorWrapper = document.querySelector('.codex-editor') as HTMLElement;
+    if (editorWrapper) {
+      editorWrapper.style.position = 'relative';
+    }
+  });
+</script>
+
+<style>
+  /* EditorJS styles */
+  #editorjs {
+    @apply max-w-none;
+    min-height: 300px;
+    padding-bottom: 100px;
+  }
+
+  :global(.ce-block__content),
+  :global(.ce-toolbar__content) {
+    max-width: none;
+    margin-left: 0;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+
+  /* Ensure the Plus Button stays on the left */
+  :global(.ce-toolbar__plus) {
+    left: 0 !important;
+    right: auto !important;
+  }
+
+  :global(.ce-toolbar__actions) {
+    right: 0 !important;
+  }
+
+  /* Adjust the content area to accommodate the left-aligned Plus Button */
+  :global(.ce-block__content) {
+    margin-left: 30px; /* Adjust this value as needed */
+  }
+
+  /* Adjust spacing between blocks */
+  :global(.ce-block:not(:last-child)) {
+    margin-bottom: 0.5em;
+  }
+
+  /* Adjust paragraph spacing */
+  :global(.ce-paragraph) {
+    line-height: 1.6;
+    margin-bottom: 0.3em;
+  }
+
+  /* Adjust header spacing */
+  :global(.ce-header) {
+    padding: 0.3em 0;
+    margin-bottom: 0.3em;
+  }
+
+  :global(h1.ce-header) {
+    font-size: 1.8em;
+    font-weight: 600;
+  }
+
+  :global(h2.ce-header) {
+    font-size: 1.5em;
+    font-weight: 600;
+  }
+
+  :global(h3.ce-header) {
+    font-size: 1.3em;
+    font-weight: 600;
+  }
+
+  :global(h4.ce-header) {
+    font-size: 1.2em;
+    font-weight: 600;
+  }
+
+  :global(h5.ce-header) {
+    font-size: 1.1em;
+    font-weight: 600;
+  }
+
+  :global(h6.ce-header) {
+    font-size: 1em;
+    font-weight: 600;
+  }
+
+  /* Adjust list spacing */
+  :global(.ce-block--list) {
+    margin-bottom: 0.3em;
+  }
+
+  :global(.ce-block--list .ce-block__content) {
+    margin-left: 1em;
+  }
+
+  /* Adjust quote spacing */
+  :global(.ce-block--quote) {
+    margin-bottom: 0.5em;
+  }
+
+  /* Adjust delimiter spacing */
+  :global(.ce-delimiter) {
+    margin: 0.5em 0;
+  }
+
+  /* Remove any styles that might be overriding the left alignment */
+  :global(.codex-editor--narrow .ce-toolbar__plus) {
+    left: 0 !important;
+  }
+
+  :global(.codex-editor--narrow .ce-toolbar__actions) {
+    right: 0 !important;
+  }
+</style>
