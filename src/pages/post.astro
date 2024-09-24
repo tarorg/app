@@ -70,9 +70,15 @@ import DataContent from '../components/data.astro';
     this.style.height = (this.scrollHeight) + 'px';
   });
 
-  // Add this event listener to handle the custom event from data.astro
-  window.addEventListener('showContent', (event: CustomEvent) => {
-    const contentId = event.detail;
-    showContent(contentId);
-  });
+  // Remove the custom event listener as it's no longer needed
+  // window.addEventListener('showContent', (event: CustomEvent) => {
+  //   const contentId = event.detail;
+  //   showContent(contentId);
+  // });
 </script>
+
+<style>
+  .content-container {
+    height: calc(100vh - 64px); /* Adjust this value based on your header height */
+  }
+</style>
