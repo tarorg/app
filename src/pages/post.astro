@@ -8,77 +8,52 @@ import DataContent from '../components/data.astro';
 ---
 
 <Layout title="Create Post">
-  <div class="flex h-screen bg-white">
+  <div class="flex flex-col lg:flex-row min-h-screen bg-white">
     <SidePanelMenu />
-    <div class="content-container flex-1 ml-64 overflow-hidden transition-all duration-300 bg-white">
-      <MediaContent />
-      <NotesContent />
-      <MetadataContent />
-      <DataContent />
+    <div id="main-content" class="flex-1 overflow-hidden transition-all duration-300 bg-white lg:ml-64 ml-0">
+      <div class="p-4 lg:p-8 mt-16 lg:mt-0"> <!-- Added margin-top for small screens -->
+        <MediaContent />
+        <NotesContent />
+        <MetadataContent />
+        <DataContent />
+      </div>
     </div>
   </div>
 </Layout>
 
 <script>
-  // Handle left panel button clicks
-  const mediaBtn = document.querySelector('a[onclick="showContent(\'mediaContent\')"]');
-  const notesBtn = document.querySelector('a[onclick="showContent(\'notesContent\')"]');
-  const metadataBtn = document.querySelector('a[onclick="showContent(\'metadataContent\')"]');
-  const dataBtn = document.querySelector('a[onclick="showContent(\'dataContent\')"]');
-  const mediaContent = document.getElementById('mediaContent');
-  const notesContent = document.getElementById('notesContent');
-  const metadataContent = document.getElementById('metadataContent');
-  const dataContent = document.getElementById('dataContent');
-
   function showContent(contentId: string) {
-    [mediaContent, notesContent, metadataContent, dataContent].forEach(el => {
-      if (el) el.classList.add('hidden');
+    const contents = ['mediaContent', 'notesContent', 'metadataContent', 'dataContent'];
+    contents.forEach(id => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.classList.toggle('hidden', id !== contentId);
+      }
     });
-    const contentElement = document.getElementById(contentId);
-    if (contentElement) {
-      contentElement.classList.remove('hidden');
-    }
   }
 
-  mediaBtn?.addEventListener('click', (e) => {
-    e.preventDefault();
-    showContent('mediaContent');
-  });
-
-  notesBtn?.addEventListener('click', (e) => {
-    e.preventDefault();
-    showContent('notesContent');
-  });
-
-  metadataBtn?.addEventListener('click', (e) => {
-    e.preventDefault();
-    showContent('metadataContent');
-  });
-
-  dataBtn?.addEventListener('click', (e) => {
-    e.preventDefault();
-    showContent('dataContent');
+  const sidebarLinks = document.querySelectorAll('.sidebar-link');
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const contentId = link.getAttribute('data-content');
+      if (contentId) {
+        showContent(contentId);
+      }
+    });
   });
 
   // Show Notes content by default
   showContent('notesContent');
 
-  // Add this to handle the auto-expanding textarea for the title
+  // Handle auto-expanding textarea for the title
   const titleTextarea = document.getElementById('title') as HTMLTextAreaElement;
   titleTextarea?.addEventListener('input', function() {
     this.style.height = 'auto';
     this.style.height = (this.scrollHeight) + 'px';
   });
-
-  // Remove the custom event listener as it's no longer needed
-  // window.addEventListener('showContent', (event: CustomEvent) => {
-  //   const contentId = event.detail;
-  //   showContent(contentId);
-  // });
 </script>
 
 <style>
-  .content-container {
-    height: calc(100vh - 64px); /* Adjust this value based on your header height */
-  }
+  /* Add any additional styles here if needed */
 </style>
