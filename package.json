@@ -29,7 +29,7 @@
     "@editorjs/quote": "^2.7.2",
     "@editorjs/table": "^2.4.1",
     "@editorjs/warning": "^1.4.0",
-    "@libsql/client": "^0.3.0",
+    "@libsql/client": "^0.5.0",
     "@nhost/nhost-js": "^3.1.9",
     "astro": "^4.15.6",
     "groq-sdk": "^0.7.0",
