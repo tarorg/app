@@ -21,85 +21,87 @@ const genderOptions = ['Male', 'Female', 'Other', 'Prefer not to say'];
 ---
 
 <div id="dataContent" class="bg-white h-full overflow-y-auto">
-  <div class="pb-4 bg-white p-4">
-    <form class="flex items-center max-w-lg">   
-      <label for="table-search" class="sr-only">Search</label>
-      <div class="relative w-full">
-        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-          <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+  <div id="dataTable" class="bg-white">
+    <div class="pb-4 bg-white p-4">
+      <form class="flex items-center max-w-lg">   
+        <label for="table-search" class="sr-only">Search</label>
+        <div class="relative w-full">
+          <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+            <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+            </svg>
+          </div>
+          <input type="text" id="table-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Search for items" />
+        </div>
+        <button type="submit" class="p-2.5 ms-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+          <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
           </svg>
-        </div>
-        <input type="text" id="table-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Search for items" />
-      </div>
-      <button type="submit" class="p-2.5 ms-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
-        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-        </svg>
-        <span class="sr-only">Search</span>
-      </button>
-      <button type="button" id="addIncidentBtn" class="p-2.5 ms-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
-        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-        </svg>
-        <span class="sr-only">Add item</span>
-      </button>
-    </form>
-  </div>
-  <table class="w-full text-sm text-left text-gray-500">
-    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-      <tr>
-        <th scope="col" class="p-4">
-          <div class="flex items-center">
-            <input id="checkbox-all-search" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
-            <label for="checkbox-all-search" class="sr-only">checkbox</label>
-          </div>
-        </th>
-        <th scope="col" class="px-6 py-3">Name</th>
-        <th scope="col" class="px-6 py-3">Incident</th>
-        <th scope="col" class="px-6 py-3">Location</th>
-        <th scope="col" class="px-6 py-3">Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      {incidents.map((incident) => (
-        <tr class="bg-white hover:bg-gray-50">
-          <td class="w-4 p-4">
+          <span class="sr-only">Search</span>
+        </button>
+        <button type="button" id="addIncidentBtn" class="p-2.5 ms-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+          <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+          </svg>
+          <span class="sr-only">Add item</span>
+        </button>
+      </form>
+    </div>
+    <table class="w-full text-sm text-left text-gray-500">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+        <tr>
+          <th scope="col" class="p-4">
             <div class="flex items-center">
-              <input id={`checkbox-table-search-${incident.id}`} type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
-              <label for={`checkbox-table-search-${incident.id}`} class="sr-only">checkbox</label>
+              <input id="checkbox-all-search" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+              <label for="checkbox-all-search" class="sr-only">checkbox</label>
             </div>
-          </td>
-          <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-            {incident.name}
           </th>
-          <td class="px-6 py-4">{incident.incident}</td>
-          <td class="px-6 py-4">{incident.location}</td>
-          <td class="px-6 py-4">
-            <a href="#" class="font-medium text-blue-600 hover:underline">Edit</a>
-          </td>
+          <th scope="col" class="px-6 py-3">Name</th>
+          <th scope="col" class="px-6 py-3">Incident</th>
+          <th scope="col" class="px-6 py-3">Location</th>
+          <th scope="col" class="px-6 py-3">Action</th>
         </tr>
-      ))}
-    </tbody>
-  </table>
-  <nav class="flex items-center justify-between p-4" aria-label="Table navigation">
-    <span class="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto">
-      Showing <span class="font-semibold text-gray-900">1-{Math.min(itemsPerPage, incidents.length)}</span> of <span class="font-semibold text-gray-900">{incidents.length}</span>
-    </span>
-    <ul class="inline-flex -space-x-px text-sm h-8">
-      <li>
-        <a href="#" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700">Previous</a>
-      </li>
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+      </thead>
+      <tbody>
+        {incidents.map((incident) => (
+          <tr class="bg-white hover:bg-gray-50">
+            <td class="w-4 p-4">
+              <div class="flex items-center">
+                <input id={`checkbox-table-search-${incident.id}`} type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                <label for={`checkbox-table-search-${incident.id}`} class="sr-only">checkbox</label>
+              </div>
+            </td>
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+              {incident.name}
+            </th>
+            <td class="px-6 py-4">{incident.incident}</td>
+            <td class="px-6 py-4">{incident.location}</td>
+            <td class="px-6 py-4">
+              <a href="#" class="font-medium text-blue-600 hover:underline">Edit</a>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <nav class="flex items-center justify-between p-4" aria-label="Table navigation">
+      <span class="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto">
+        Showing <span class="font-semibold text-gray-900">1-{Math.min(itemsPerPage, incidents.length)}</span> of <span class="font-semibold text-gray-900">{incidents.length}</span>
+      </span>
+      <ul class="inline-flex -space-x-px text-sm h-8">
         <li>
-          <a href="#" class={`flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${page === 1 ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700' : ''}`}>{page}</a>
+          <a href="#" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700">Previous</a>
         </li>
-      ))}
-      <li>
-        <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700">Next</a>
-      </li>
-    </ul>
-  </nav>
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <li>
+            <a href="#" class={`flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${page === 1 ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700' : ''}`}>{page}</a>
+          </li>
+        ))}
+        <li>
+          <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700">Next</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
 
   <!-- Add Incident Form (initially hidden) -->
   <div id="addIncidentForm" class="hidden bg-white p-6 border-t-2 border-gray-200">
@@ -124,7 +126,7 @@ const genderOptions = ['Male', 'Female', 'Other', 'Prefer not to say'];
         </nav>
       </div>
     </div>
-    <form id="addIncidentForm" class="space-y-4">
+    <form id="newIncidentForm" class="space-y-4">
       <div id="incidentTab" class="tab-content">
         <div class="grid gap-6 mb-6 md:grid-cols-2">
           <div>
@@ -236,6 +238,8 @@ const genderOptions = ['Male', 'Female', 'Other', 'Prefer not to say'];
   const addIncidentBtn = document.getElementById('addIncidentBtn');
   const addIncidentForm = document.getElementById('addIncidentForm');
   const closeModalIcon = document.getElementById('closeModalIcon');
+  const dataTable = document.getElementById('dataTable');
+  const newIncidentForm = document.getElementById('newIncidentForm') as HTMLFormElement;
 
   searchInput.addEventListener('input', function() {
     const searchTerm = this.value.toLowerCase();
@@ -251,16 +255,18 @@ const genderOptions = ['Male', 'Female', 'Other', 'Prefer not to say'];
 
   addIncidentBtn?.addEventListener('click', () => {
     addIncidentForm?.classList.remove('hidden');
+    dataTable?.classList.add('hidden');
     addIncidentForm?.scrollIntoView({ behavior: 'smooth' });
   });
 
   function closeForm() {
     addIncidentForm?.classList.add('hidden');
+    dataTable?.classList.remove('hidden');
   }
 
   closeModalIcon?.addEventListener('click', closeForm);
 
-  addIncidentForm?.addEventListener('submit', (e) => {
+  newIncidentForm?.addEventListener('submit', (e) => {
     e.preventDefault();
     // Here you would typically send the form data to your server
     // For now, we'll just log it to the console
@@ -268,6 +274,10 @@ const genderOptions = ['Male', 'Female', 'Other', 'Prefer not to say'];
     console.log('New incident:', Object.fromEntries(formData));
     closeForm();
   });
+
+  // Add event listener for the cancel button
+  const cancelButton = document.getElementById('closeModal');
+  cancelButton?.addEventListener('click', closeForm);
 
   // Tab switching functionality
   const tabButtons = document.querySelectorAll('.tab-button');
