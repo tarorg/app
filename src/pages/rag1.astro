@@ -67,7 +67,7 @@ async function performSimilaritySearch(question: string) {
 
   const result = await db.execute({
     sql: `SELECT *
-          FROM datas
+          FROM datas_fts
           WHERE ${searchConditions}
           LIMIT 5`,
     args: searchArgs
